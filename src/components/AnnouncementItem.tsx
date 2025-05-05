@@ -83,18 +83,6 @@ const AnnouncementItem: React.FC<AnnouncementItemProps> = ({ item }) => {
             </ul>
           </div>
         )}
-
-        <div className="attendance-section mt-4 flex items-center space-x-4">
-          <button
-            className="attendance-button bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-lg shadow-md transition-all duration-300 transform hover:scale-105"
-            onClick={handleAttendance}
-          >
-            Asistir
-          </button>
-          <span className="attendance-count text-gray-700 text-sm font-medium">
-            {attendance} personas asistirán
-          </span>
-        </div>
       </div>
     </div>
   );
