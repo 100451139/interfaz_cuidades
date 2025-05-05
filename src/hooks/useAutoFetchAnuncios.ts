@@ -2,44 +2,35 @@ import { useEffect } from 'react';
 import { useAppContext } from '../context/AppContext';
 import { Item } from '../types/types';
 
-const API_URL = 'http://localhost:5000/ultimo-anuncio';
+const API_URL = 'http://localhost:5000/api/mensajes'; 
 
 const useAutoFetchAnuncios = () => {
-  const { state, dispatch } = useAppContext();
+  const { dispatch } = useAppContext();
 
   useEffect(() => {
-    const fetchAnuncio = async () => {
+    const fetchMensajes = async () => {
       try {
         const res = await fetch(API_URL);
         if (!res.ok) return;
-        const raw = await res.json();
+        const mensajes: Item[] = await res.json();
 
-        console.log("📦 Respuesta cruda del backend:", raw);
-        const tipo = raw.tipo ?? (
-            raw.clasificacion?.toLowerCase() === 'anuncio' ? 'Anuncio' : 'Evento'
-          );
-        const data: Item = {
-            ...raw,
-            tipo: tipo,
-            id: raw.id ?? crypto.randomUUID()
-          };
-
-          dispatch({
-            type: 'ADD_ITEM',
-            payload: {
-              ...data,
-            }
-          });
+        console.log("Mensajes recibidos del backend:", mensajes);
+        dispatch({
+          type: 'SET_ITEMS', 
+          payload: mensajes,
+        });
       } catch (err) {
-        console.error('❌ Error al obtener nuevo anuncio:', err);
+        console.error('Error al obtener los mensajes:', err);
       }
     };
 
-    fetchAnuncio();
-    const interval = setInterval(fetchAnuncio, 30000);
+    fetchMensajes();
+    const interval = setInterval(fetchMensajes, 30000); 
 
     return () => clearInterval(interval);
-  }, [dispatch, state.items]);
+  }, [dispatch]);
+
+  return null;
 };
 
 export default useAutoFetchAnuncios;

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Calendar, MapPin, Link as LinkIcon } from 'lucide-react';
 import { Item } from '../types/types';
 
@@ -7,8 +7,23 @@ interface AnnouncementItemProps {
 }
 
 const AnnouncementItem: React.FC<AnnouncementItemProps> = ({ item }) => {
+  const [attendance, setAttendance] = useState<number>(0);
+
+  useEffect(() => {
+    const savedAttendance = localStorage.getItem(`announcement-${item.id}`);
+    if (savedAttendance) {
+      setAttendance(parseInt(savedAttendance, 10));
+    }
+  }, [item.id]);
+
+  const handleAttendance = () => {
+    const newAttendance = attendance + 1;
+    setAttendance(newAttendance);
+    localStorage.setItem(`announcement-${item.id}`, newAttendance.toString());
+  };
+
   const rotation = Math.random() * 6 - 3;
-  
+
   return (
     <div 
       className="announcement-card"
@@ -54,20 +69,32 @@ const AnnouncementItem: React.FC<AnnouncementItemProps> = ({ item }) => {
             </div>
             <ul className="links-list">
               {item.links.map((url, index) => (
-          <li key={index}>
-            <a 
-              href={url} 
-              target="_blank" 
-              rel="noopener noreferrer"
-              className="link-item"
-            >
-              {url}
-            </a>
-          </li>
+                <li key={index}>
+                  <a 
+                    href={url} 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    className="link-item"
+                  >
+                    {url}
+                  </a>
+                </li>
               ))}
             </ul>
           </div>
         )}
+
+        <div className="attendance-section mt-4 flex items-center space-x-4">
+          <button
+            className="attendance-button bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-lg shadow-md transition-all duration-300 transform hover:scale-105"
+            onClick={handleAttendance}
+          >
+            Asistir
+          </button>
+          <span className="attendance-count text-gray-700 text-sm font-medium">
+            {attendance} personas asistirán
+          </span>
+        </div>
       </div>
     </div>
   );
